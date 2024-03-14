@@ -5,7 +5,13 @@ import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 
-export default function AddModal({ setCounter, data, setData }) {
+export default function AddModal({
+  setCounter,
+  data,
+  setData,
+  dupData,
+  setDupData,
+}) {
   const objStatus = [
     { label: "Completed", value: "completed" },
     { label: "Pending", value: "pending" },
@@ -75,8 +81,10 @@ export default function AddModal({ setCounter, data, setData }) {
       status: status,
       createdtime: new Date().toISOString(),
       updatedtime: new Date().toISOString(),
+      assignto: "yash",
     };
     setData([...data, newData]);
+    setDupData([...data, newData]);
     setCounter(false);
   }
 

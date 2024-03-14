@@ -5,7 +5,14 @@ import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 
-export default function Edit({ setEditCounter, data, setData, editId }) {
+export default function Edit({
+  setEditCounter,
+  data,
+  setData,
+  editId,
+  dupData,
+  setDupData,
+}) {
   const objStatus = [
     { label: "Completed", value: "completed" },
     { label: "Pending", value: "pending" },
@@ -18,7 +25,6 @@ export default function Edit({ setEditCounter, data, setData, editId }) {
   ];
 
   const singleData = data.find((item) => item.id == editId);
-  console.log(singleData);
 
   const [title, setTitle] = useState(singleData.title);
   const [description, setDescription] = useState(singleData.description);
@@ -59,7 +65,7 @@ export default function Edit({ setEditCounter, data, setData, editId }) {
       setStatusError("");
     }
 
-    const updatedData = data.map((item) => {
+    const updatedData = dupData.map((item) => {
       if (item.id === editId) {
         return {
           ...item,
@@ -74,6 +80,7 @@ export default function Edit({ setEditCounter, data, setData, editId }) {
     });
 
     setData(updatedData);
+    setDupData(updatedData);
     setEditCounter(false);
   }
 

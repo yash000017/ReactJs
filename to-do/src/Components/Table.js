@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,7 +15,6 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
-import Avatarr from "./Avatarr";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -40,17 +40,39 @@ export default function CustomizedTables({
   setData,
   setEditCounter,
   setEditId,
+  dupData,
+  setDupData,
+  personName,
+  filter,
+  personName1,
 }) {
   function handleDelete(id) {
     setData(data.filter((item) => item.id !== id));
+    setDupData(dupData.filter((item) => item.id !== id));
   }
   function handleEdit(id) {
     setEditId(id);
     setEditCounter(true);
   }
+
+  function handleAssignChange(e, id) {
+    const updatedData = data.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          assignto: e.target.value,
+        };
+      }
+      return item;
+    });
+
+    setData(updatedData);
+    setDupData(updatedData);
+  }
+
   const assignObj = [
     {
-      value: "Yash",
+      value: "yash",
       label: (
         <div className="flex-global">
           <Avatar>Y</Avatar>
@@ -59,7 +81,7 @@ export default function CustomizedTables({
       ),
     },
     {
-      value: "Nirmal",
+      value: "nirmal",
       label: (
         <div className="flex-global">
           <Avatar>N</Avatar>
@@ -85,78 +107,104 @@ export default function CustomizedTables({
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((item) => (
-            <StyledTableRow key={item.title}>
-              <StyledTableCell>{item.id}</StyledTableCell>
-              <StyledTableCell align="right" component="th" scope="row">
-                {item.title}
-              </StyledTableCell>
-              <StyledTableCell align="right">
-                {item.description}
-              </StyledTableCell>
-              <StyledTableCell align="right">{item.priority}</StyledTableCell>
-              <StyledTableCell align="right">{item.status}</StyledTableCell>
-              <StyledTableCell>
-                <div>{new Date(item.createdtime).toLocaleTimeString()}</div>
-                <div>{new Date(item.createdtime).toLocaleDateString()}</div>
-              </StyledTableCell>
-              <StyledTableCell>
-                <div>{new Date(item.updatedtime).toLocaleTimeString()}</div>
-                <div>{new Date(item.updatedtime).toLocaleDateString()}</div>
-              </StyledTableCell>
-              <StyledTableCell sx={{ minWidth: 150 }} align="right">
-                <Button
-                  onClick={() => handleDelete(item.id)}
-                  sx={{
-                    color: "rgba(0, 0, 0, 0.87)",
-                    backgroundColor: "#1976d2",
-                    marginTop: "10px",
-                    width: "30px",
-                    height: "45px",
-                    marginRight: "10px",
-                  }}
-                >
-                  <DeleteIcon />
-                </Button>
-                <Button
-                  onClick={() => handleEdit(item.id)}
-                  sx={{
-                    color: "rgba(0, 0, 0, 0.87)",
-                    backgroundColor: "#1976d2",
-                    marginTop: "10px",
-                    width: "30px",
-                    height: "45px",
-                  }}
-                >
-                  <EditIcon />
-                </Button>
-              </StyledTableCell>
-              <StyledTableCell align="right">
-                <Box
-                  component="form"
-                  sx={{
-                    "& .MuiTextField-root": { m: 1, width: 150 },
-                  }}
-                  noValidate
-                  autoComplete="off"
-                >
-                  <TextField
-                    id="outlined-select-currency"
-                    select
-                    label="Select"
-                    defaultValue="Yash"
-                    sx={{}}
+          {data
+            .filter((item) => {
+              if (filter.personName.length && filter.personName1.length) {
+                console.log("1");
+                return (
+                  filter.personName.every((status) =>
+                    item.status.toLowerCase().includes(status.toLowerCase())
+                  ) &&
+                  filter.personName1.every((priority) =>
+                    item.priority.toLowerCase().includes(priority.toLowerCase())
+                  )
+                );
+              } else if (filter.personName.length) {
+                console.log("2", data, filter.personName);
+                return filter.personName.every((status) =>
+                  item.status.toLowerCase().includes(status.toLowerCase())
+                );
+              } else if (filter.personName1.length) {
+                console.log("3");
+                return filter.personName1.every((priority) =>
+                  item.priority.toLowerCase().includes(priority.toLowerCase())
+                );
+              } else {
+                return true;
+              }
+            })
+            .map((item) => (
+              <StyledTableRow key={item.title}>
+                <StyledTableCell>{item.id}</StyledTableCell>
+                <StyledTableCell align="right" component="th" scope="row">
+                  {item.title}
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  {item.description}
+                </StyledTableCell>
+                <StyledTableCell align="right">{item.priority}</StyledTableCell>
+                <StyledTableCell align="right">{item.status}</StyledTableCell>
+                <StyledTableCell>
+                  <div>{new Date(item.createdtime).toLocaleTimeString()}</div>
+                  <div>{new Date(item.createdtime).toLocaleDateString()}</div>
+                </StyledTableCell>
+                <StyledTableCell>
+                  <div>{new Date(item.updatedtime).toLocaleTimeString()}</div>
+                  <div>{new Date(item.updatedtime).toLocaleDateString()}</div>
+                </StyledTableCell>
+                <StyledTableCell sx={{ minWidth: 150 }} align="right">
+                  <Button
+                    onClick={() => handleDelete(item.id)}
+                    sx={{
+                      color: "rgba(0, 0, 0, 0.87)",
+                      backgroundColor: "#1976d2",
+                      marginTop: "10px",
+                      width: "30px",
+                      height: "45px",
+                      marginRight: "10px",
+                    }}
                   >
-                    {assignObj.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Box>
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
+                    <DeleteIcon />
+                  </Button>
+                  <Button
+                    onClick={() => handleEdit(item.id)}
+                    sx={{
+                      color: "rgba(0, 0, 0, 0.87)",
+                      backgroundColor: "#1976d2",
+                      marginTop: "10px",
+                      width: "30px",
+                      height: "45px",
+                    }}
+                  >
+                    <EditIcon />
+                  </Button>
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  <Box
+                    component="form"
+                    sx={{
+                      "& .MuiTextField-root": { m: 1, width: 150 },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                  >
+                    <TextField
+                      id="outlined-select-currency"
+                      select
+                      label="Select"
+                      defaultValue="yash"
+                      onChange={(e) => handleAssignChange(e, item.id)}
+                    >
+                      {assignObj.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Box>
+                </StyledTableCell>
+              </StyledTableRow>
+            ))}
         </TableBody>
       </Table>
     </TableContainer>
