@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { tempMovieData } from "../App";
 import Movie from "./Movie";
 
-export default function MovieList({ movies }) {
+export default function MovieList({ onSelectMovie, movies }) {
   return (
     <ul className="list">
       {movies?.map((movie) => (
-        <Movie movie={movie} />
+        <Movie onSelectMovie={onSelectMovie} movie={movie} />
       ))}
     </ul>
   );
